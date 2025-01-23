@@ -4,6 +4,7 @@ from typing import Optional,List
 import uuid
 from firebase_admin import credentials, firestore, initialize_app
 import os
+from fastapi.middleware.cors import CORSMiddleware
 import difflib
 from dotenv import load_dotenv
 
@@ -16,6 +17,15 @@ db = firestore.client()
 
 # FastAPI app
 app = FastAPI()
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins. Replace with a list of origins to restrict.
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods. Adjust as needed.
+    allow_headers=["*"],  # Allows all headers. Adjust as needed.
+)
 
 # Firestore collection name for recruiters
 RECRUITERS_COLLECTION = "recruiters"
