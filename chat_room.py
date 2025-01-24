@@ -1,7 +1,17 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from typing import List, Dict
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins. Replace with a list of origins to restrict.
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods. Adjust as needed.
+    allow_headers=["*"],  # Allows all headers. Adjust as needed.
+)
+
 
 class ConnectionManager:
     def __init__(self):
