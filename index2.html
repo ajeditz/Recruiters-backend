@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiter Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+
+        .chat-container {
+            width: 50%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .messages {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .message {
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 8px;
+            background-color: #e3f2fd;
+        }
+
+        .message.self {
+            background-color: #c8e6c9;
+            align-self: flex-end;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-container input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .input-container button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .input-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Recruiter Chat</h1>
+    <div class="chat-container">
+        <div>
+            <label for="userId">Your User ID:</label>
+            <input type="text" id="userId" placeholder="Enter your user ID" />
+            <button onclick="connect()">Connect</button>
+        </div>
+
+        <div class="messages" id="messages"></div>
+
+        <div class="input-container">
+            <input type="text" id="messageInput" placeholder="Type your message..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        let ws; // WebSocket instance
+        const messagesBox = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const userIdInput = document.getElementById('userId');
+
+        function connect() {
+            const userId = userIdInput.value.trim();
+            const roomId = "recruiter_chat"; // Example room ID
+
+            if (!userId) {
+                alert("Please enter a User ID to connect!");
+                return;
+            }
+
+            // Establish WebSocket connection
+            ws = new WebSocket(`ws://localhost:8080/ws/chat/${roomId}/${userId}`);
+
+            ws.onopen = () => {
+                alert(`Connected as ${userId}`);
+            };
+
+            ws.onmessage = (event) => {
+                const messageData = JSON.parse(event.data); // Parse JSON message
+                const { user_id, content } = messageData;
+
+                // Create message element
+                const messageElement = document.createElement('div');
+                messageElement.className = "message";
+                if (user_id === userId) {
+                    messageElement.classList.add("self");
+                }
+                messageElement.textContent = `${user_id}: ${content}`;
+
+                // Append message to messages box
+                messagesBox.appendChild(messageElement);
+                messagesBox.scrollTop = messagesBox.scrollHeight; // Auto-scroll
+            };
+
+            ws.onclose = () => {
+                alert("Connection closed");
+            };
+        }
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+
+            if (message && ws) {
+                ws.send(JSON.stringify({ message }));
+                messageInput.value = ''; // Clear input
+            } else {
+                alert("Cannot send message: Not connected or empty input.");
+            }
+        }
+    </script>
+</body>
+</html>
