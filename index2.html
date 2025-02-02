@@ -102,7 +102,7 @@
             }
 
             // Establish WebSocket connection
-            ws = new WebSocket(`ws://localhost:8080/ws/chat/${roomId}/${userId}`);
+            ws = new WebSocket(`https://chat-room-api-ms4u.onrender.com/ws/chat/${roomId}/${userId}`);
 
             ws.onopen = () => {
                 alert(`Connected as ${userId}`);
