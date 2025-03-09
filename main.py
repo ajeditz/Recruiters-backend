@@ -153,6 +153,7 @@ class Candidate(BaseModel):
     location: str  # city, country
     notice_period: str  # e.g., "30 days", "Immediate"
     expected_ctc: str  # e.g., "50k/month", "$60/hour"
+    sold:int = Field(0,description="How many times the candidate profile has been sold")
 
 
 # Create a candidate

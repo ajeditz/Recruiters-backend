@@ -4,6 +4,7 @@ from typing import List, Optional
 import firebase_admin
 from firebase_admin import credentials, firestore, initialize_app
 import uuid
+from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 import os
 from dotenv import load_dotenv
@@ -16,6 +17,16 @@ initialize_app(cred)
 db = firestore.client()
 
 app = FastAPI()
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins. Replace with a list of origins to restrict.
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods. Adjust as needed.
+    allow_headers=["*"],  # Allows all headers. Adjust as needed.
+)
+
 
 CANDIDATE_COLLECTION="candidate_required"
 
